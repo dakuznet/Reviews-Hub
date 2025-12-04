@@ -33,27 +33,68 @@
   - Просмотр личного профиля с историей отзывов
   - 
 ## 🗄 Структура базы данных
-  - **Модели**
-    - User (пользователь):
-      - email
-      - password
-      - username
-    - Item (произведение):
-      - title
-      - description
-      - catogory (book/movie)
-      - author
-      - genre
-    - Review (отзыв):
-      - text
-      - rating (1 - 5)
-      - userID
-      - itemID
-  - **Связи**
-    - User has_many :reviews
-    - Item has_many :reviews
-    - Review belongs_to :user
-    - Review belongs_to :item
+  ```mermaid
+      erDiagram
+    USER {
+        int id PK
+        string email
+        string username
+    }
+    
+    BOOK {
+        int id PK
+        string title
+        string author
+        string publisher
+        int year
+        int edition
+        string genre
+        string description
+        string url
+    }
+
+    MOVIE {
+      int id PK
+      string title
+      string director
+      string screenwriter
+      string producer
+      int year
+      string genre
+      string description
+      string url
+    }
+    
+    REVIEW {
+        int id PK
+        int rating
+        int userId FK
+        int reviewableId
+        string reviewableType
+    }
+    
+    USER ||--o{ REVIEW : ""
+    REVIEW }o--|| BOOK : "reviewable"
+    REVIEW }o--|| MOVIE : "reviewable"
+  ```
+## Описание API
+  - **Books**
+    - GET /books - получает все книги
+    - GET /books/:id - получает конкретную книгу
+    - POST /books - создает новую книгу
+  - **Movies**
+    - GET /movies - получает все книги
+    - GET /movies/:id - получает конкретную книгу
+    - POST /movies - создает книгу
+  - **Rewievs**
+    - GET /reviews - получает все отзывы
+    - GET /reviews/:id - получает конкретный отзыв
+    - POST /reviews - создает отзыв
+    - DELETE /reviews/:id - удаляет отзыв
+  - **Users**
+    - GET /users/:id - получает профиль пользователя
+    - GET /users/:id/reviews - получает все отзывы конкретного пользователя
+    
 ## 👥 Команда разработки
   - Кузнецов Даниил
   - Кипа Кирилл
