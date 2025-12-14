@@ -1,0 +1,29 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  title: MyString
+  director: MyString
+  screenwriter: MyString
+  producer: MyString
+  year: 1
+  genre: MyString
+  description: MyText
+  url: MyString
+  duration: 1
+  country: MyString
+  studio: MyString
+  user: one
+
+two:
+  title: MyString
+  director: MyString
+  screenwriter: MyString
+  producer: MyString
+  year: 1
+  genre: MyString
+  description: MyText
+  url: MyString
+  duration: 1
+  country: MyString
+  studio: MyString
+  user: two

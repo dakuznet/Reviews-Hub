@@ -1,0 +1,81 @@
+<%= form_with(model: movie) do |form| %>
+  <% if movie.errors.any? %>
+    <div id="error_explanation" class="alert alert-danger">
+      <h2><%= pluralize(movie.errors.count, "error") %> запрещают сохранение этого фильма:</h2>
+      <ul>
+        <% movie.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="row">
+    <div class="col-md-6">
+      <div class="mb-3">
+        <%= form.label :title, "Название фильма", class: "form-label" %>
+        <%= form.text_field :title, class: "form-control", required: true %>
+      </div>
+
+      <div class="mb-3">
+        <%= form.label :director, "Режиссер", class: "form-label" %>
+        <%= form.text_field :director, class: "form-control", required: true %>
+      </div>
+
+      <div class="mb-3">
+        <%= form.label :screenwriter, "Сценарист", class: "form-label" %>
+        <%= form.text_field :screenwriter, class: "form-control" %>
+      </div>
+
+      <div class="mb-3">
+        <%= form.label :producer, "Продюсер", class: "form-label" %>
+        <%= form.text_field :producer, class: "form-control" %>
+      </div>
+
+      <div class="mb-3">
+        <%= form.label :year, "Год выпуска", class: "form-label" %>
+        <%= form.number_field :year, class: "form-control", required: true, min: 1888, max: Date.today.year %>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="mb-3">
+        <%= form.label :genre, "Жанр", class: "form-label" %>
+        <%= form.text_field :genre, class: "form-control", placeholder: "Например: Драма, Комедия, Фантастика" %>
+      </div>
+
+      <div class="mb-3">
+        <%= form.label :duration, "Длительность (в минутах)", class: "form-label" %>
+        <%= form.number_field :duration, class: "form-control", min: 1 %>
+      </div>
+
+      <div class="mb-3">
+        <%= form.label :country, "Страна", class: "form-label" %>
+        <%= form.text_field :country, class: "form-control", placeholder: "Например: США, Россия, Франция" %>
+      </div>
+
+      <div class="mb-3">
+        <%= form.label :studio, "Студия", class: "form-label" %>
+        <%= form.text_field :studio, class: "form-control" %>
+      </div>
+
+      <div class="mb-3">
+        <%= form.label :url, "Ссылка на постер", class: "form-label" %>
+        <%= form.url_field :url, class: "form-control", placeholder: "https://example.com/poster.jpg" %>
+        <small class="form-text text-muted">Укажите URL изображения постера фильма</small>
+      </div>
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :description, "Описание", class: "form-label" %>
+    <%= form.text_area :description, class: "form-control", rows: 6, 
+          placeholder: "Опишите сюжет, основные идеи, ваше впечатление от фильма..." %>
+    <small class="form-text text-muted">Максимум 2000 символов</small>
+  </div>
+
+  <div class="actions mt-4">
+    <%= form.submit movie.persisted? ? "Обновить фильм" : "Создать фильм", class: "btn btn-primary me-2" %>
+    <%= link_to "Отмена", movies_path, class: "btn btn-outline-secondary" %>
+  </div>
+<% end %>
