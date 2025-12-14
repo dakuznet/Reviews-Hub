@@ -1,5 +1,4 @@
 <%= form_with(model: [@reviewable, @review], local: true) do |form| %>
-  <%# Вывод ошибок валидации %>
   <% if @review.errors.any? %>
     <div id="error_explanation" class="alert alert-danger">
       <h4><%= pluralize(@review.errors.count, "error") %> запрещают сохранение этого отзыва:</h4>
@@ -11,7 +10,6 @@
     </div>
   <% end %>
 
-  <%# Поле для оценки (рейтинг) %>
   <div class="field mb-3">
     <%= form.label :rating, "Оценка", class: "form-label" %>
     <div class="rating-input">
@@ -26,14 +24,12 @@
     <small class="text-muted">Выберите от 1 до 5 звезд</small>
   </div>
 
-  <%# Поле для текста отзыва %>
   <div class="field mb-3">
     <%= form.label :text, "Текст отзыва", class: "form-label" %>
     <%= form.text_area :text, class: "form-control", rows: 4, 
           placeholder: "Напишите ваш отзыв (минимум 10 символов)" %>
   </div>
 
-  <%# Кнопки действий %>
   <div class="actions">
     <%= form.submit @review.persisted? ? "Обновить отзыв" : "Оставить отзыв", 
           class: "btn btn-primary" %>
@@ -41,18 +37,15 @@
   </div>
 <% end %>
 
-<%# JavaScript для интерактивного выбора звезд %>
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     const stars = document.querySelectorAll('.star-icon');
     const ratingInput = document.querySelectorAll('input[name="review[rating]"]');
     
-    // Обработчик клика по звезде
     stars.forEach(star => {
       star.addEventListener('click', function() {
         const value = parseInt(this.dataset.value);
         
-        // Обновляем визуальное отображение звезд
         stars.forEach((s, index) => {
           if (index < value) {
             s.classList.remove('bi-star');
@@ -63,11 +56,9 @@
           }
         });
         
-        // Выбираем соответствующий radio button
         ratingInput[value - 1].checked = true;
       });
       
-      // Эффект при наведении мыши
       star.addEventListener('mouseover', function() {
         const value = parseInt(this.dataset.value);
         
@@ -78,13 +69,11 @@
         });
       });
       
-      // Эффект при уходе мыши
       star.addEventListener('mouseout', function() {
         stars.forEach(s => {
           s.classList.remove('text-warning');
         });
         
-        // Восстанавливаем отображение на основе выбранного рейтинга
         const selectedRating = document.querySelector('input[name="review[rating]"]:checked');
         if (selectedRating) {
           const value = parseInt(selectedRating.value);
@@ -99,7 +88,6 @@
   });
 </script>
 
-<%# Стили для рейтинга %>
 <style>
   .rating-input {
     display: flex;

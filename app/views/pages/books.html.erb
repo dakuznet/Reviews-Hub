@@ -1,11 +1,9 @@
 <div class="container mt-4">
-  <!-- Заголовок и информация о книге -->
   <div class="row">
     <div class="col-md-8">
       <h1 class="display-5 mb-3"><%= @book.title %></h1>
       <h4 class="text-muted mb-4"><%= @book.author %></h4>
       
-      <!-- Блок с рейтингом -->
       <div class="rating-section mb-4 p-3 bg-light rounded">
         <h5>Рейтинг книги</h5>
         <div class="d-flex align-items-center">
@@ -30,14 +28,12 @@
         </div>
       </div>
       
-      <!-- Описание книги -->
       <div class="description mb-5">
         <h5>Описание</h5>
         <p class="lead"><%= @book.description %></p>
       </div>
     </div>
     
-    <!-- Боковая панель с действиями -->
     <div class="col-md-4">
       <div class="card">
         <div class="card-header">
@@ -54,8 +50,7 @@
       </div>
     </div>
   </div>
-  
-  <!-- Секция с отзывами -->
+
   <div class="reviews-section mt-5">
     <h3 class="mb-4">Отзывы</h3>
     

@@ -1,5 +1,4 @@
 <div class="container mt-4">
-  <!-- Хлебные крошки -->
   <nav aria-label="breadcrumb" class="mb-4">
     <ol class="breadcrumb">
       <% if @reviewable.is_a?(Book) %>
@@ -116,12 +115,10 @@
     const stars = document.querySelectorAll('.star-icon-large');
     const ratingInputs = document.querySelectorAll('input[name="review[rating]"]');
     
-    // Обработчик клика по звезде
     stars.forEach(star => {
       star.addEventListener('click', function() {
         const value = parseInt(this.dataset.value);
         
-        // Обновляем визуальное отображение
         stars.forEach((s, index) => {
           if (index < value) {
             s.classList.remove('bi-star');
@@ -132,12 +129,10 @@
           }
         });
         
-        // Устанавливаем соответствующее значение в radio button
         ratingInputs[value - 1].checked = true;
       });
     });
     
-    // Обработчик наведения на звезду
     stars.forEach(star => {
       star.addEventListener('mouseover', function() {
         const value = parseInt(this.dataset.value);

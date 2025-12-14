@@ -1,11 +1,8 @@
 <div class="container mt-4">
-  <!-- Заголовок и информация о фильме -->
   <div class="row">
     <div class="col-md-8">
       <h1 class="display-5 mb-3"><%= @movie.title %></h1>
       <h4 class="text-muted mb-4">Режиссер: <%= @movie.director %></h4>
-      
-      <!-- Блок с рейтингом -->
       <div class="rating-section mb-4 p-3 bg-light rounded">
         <h5>Рейтинг фильма</h5>
         <div class="d-flex align-items-center">
@@ -29,76 +26,51 @@
           </div>
         </div>
       </div>
-      
-      <!-- Описание фильма -->
       <div class="description mb-5">
         <h5>Описание</h5>
         <p class="lead"><%= @movie.description %></p>
       </div>
     </div>
-    
-    <!-- Боковая панель с действиями -->
-    <div class="col-md-4">
-      <div class="card">
-        <div class="card-header">
-          <h5 class="mb-0">Действия</h5>
-        </div>
-        <div class="card-body">
-          <% if user_signed_in? %>
-            <%= link_to 'Оставить отзыв', new_movie_review_path(@movie), class: 'btn btn-primary w-100 mb-2' %>
-          <% else %>
-            <%= link_to 'Войдите, чтобы оставить отзыв', new_user_session_path, class: 'btn btn-outline-primary w-100 mb-2' %>
-          <% end %>
-          <%= link_to 'Все фильмы', movies_path, class: 'btn btn-outline-secondary w-100' %>
-        </div>
-      </div>
-    </div>
-  </div>
-  
-  <!-- Секция с отзывами -->
-  <div class="reviews-section mt-5">
-    <h3 class="mb-4">Отзывы</h3>
-    
-    <% if @reviews.any? %>
-      <% @reviews.each do |review| %>
-        <div class="review-card mb-4 p-4 border rounded">
-          <div class="d-flex justify-content-between align-items-start mb-2">
-            <div>
-              <h6 class="mb-1">
-                <%= review.user.email %> 
-                <small class="text-muted">• <%= l(review.created_at, format: :short) %></small>
-              </h6>
-              <div class="rating mb-2">
-                <% (1..5).each do |star| %>
-                  <% if star <= review.rating %>
-                    <i class="bi bi-star-fill text-warning"></i>
-                  <% else %>
-                    <i class="bi bi-star text-secondary"></i>
+    <div class="reviews-section mt-5">
+      <h3 class="mb-4">Отзывы</h3>
+      <% if @reviews.any? %>
+        <% @reviews.each do |review| %>
+          <div class="review-card mb-4 p-4 border rounded">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+              <div>
+                <h6 class="mb-1">
+                  <%= review.user.email %>
+                  <small class="text-muted">• <%= l(review.created_at, format: :short) %></small>
+                </h6>
+                <div class="rating mb-2">
+                  <% (1..5).each do |star| %>
+                    <% if star <= review.rating %>
+                      <i class="bi bi-star-fill text-warning"></i>
+                    <% else %>
+                      <i class="bi bi-star text-secondary"></i>
+                    <% end %>
                   <% end %>
-                <% end %>
-                <span class="ms-2"><strong><%= review.rating %>/5</strong></span>
+                  <span class="ms-2"><strong><%= review.rating %>/5</strong></span>
+                </div>
               </div>
-            </div>
-            
-            <% if user_signed_in? && review.user == current_user %>
-              <div class="review-actions">
-                <%= link_to 'Редактировать', edit_movie_review_path(@movie, review), 
+              <% if user_signed_in? && review.user == current_user %>
+                <div class="review-actions">
+                  <%= link_to 'Редактировать', edit_movie_review_path(@movie, review), 
                     class: 'btn btn-sm btn-outline-primary me-1' %>
-                <%= button_to 'Удалить', movie_review_path(@movie, review), 
+                  <%= button_to 'Удалить', movie_review_path(@movie, review), 
                     method: :delete, 
                     data: { confirm: 'Вы уверены?' }, 
                     class: 'btn btn-sm btn-outline-danger' %>
-              </div>
-            <% end %>
+                </div>
+              <% end %>
+            </div>
+            <p class="mb-0"><%= review.text %></p>
           </div>
-          
-          <p class="mb-0"><%= review.text %></p>
+        <% end %>
+      <% else %>
+        <div class="alert alert-info">
+          <p class="mb-0">Пока нет отзывов на этот фильм. Будьте первым!</p>
         </div>
       <% end %>
-    <% else %>
-      <div class="alert alert-info">
-        <p class="mb-0">Пока нет отзывов на этот фильм. Будьте первым!</p>
-      </div>
-    <% end %>
+    </div>
   </div>
-</div>

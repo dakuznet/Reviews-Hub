@@ -1,11 +1,7 @@
-<% content_for :title, "New movie" %>
-
-<h1>New movie</h1>
-
+<% content_for :title, "Новый фильм" %>
+<h1>Новый фильм</h1>
 <%= render "form", movie: @movie %>
-
 <br>
-
 <div>
-  <%= link_to "Back to movies", movies_path %>
+  <%= link_to "Назад к фильмам", movies_path %>
 </div>

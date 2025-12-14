@@ -1,13 +1,10 @@
 <div class="container mt-4">
-  <!-- Заголовок и кнопка добавления -->
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h1 class="display-5">Каталог фильмов</h1>
     <% if user_signed_in? %>
       <%= link_to "Добавить фильм", new_movie_path, class: "btn btn-primary" %>
     <% end %>
   </div>
-
-  <!-- Поиск и фильтры -->
   <div class="card mb-4">
     <div class="card-body">
       <%= form_with(url: movies_path, method: :get, class: "row g-3") do |f| %>
@@ -32,25 +29,14 @@
       <% end %>
     </div>
   </div>
-
-  <!-- Список фильмов -->
   <% if @movies.any? %>
     <div class="row">
       <% @movies.each do |movie| %>
         <div class="col-md-6 col-lg-4 mb-4">
           <div class="card h-100">
-            <% if movie.url.present? %>
-              <img src="<%= movie.url %>" class="card-img-top" alt="<%= movie.title %>" style="height: 300px; object-fit: cover;">
-            <% else %>
-              <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 300px;">
-                <i class="bi bi-film text-secondary display-4"></i>
-              </div>
-            <% end %>
             <div class="card-body">
               <h5 class="card-title"><%= movie.title %></h5>
               <h6 class="card-subtitle mb-2 text-muted"><%= movie.director %></h6>
-              
-              <!-- Рейтинг -->
               <div class="mb-3">
                 <div class="d-flex align-items-center mb-1">
                   <div class="rating">
@@ -68,54 +54,53 @@
                   <small class="text-muted ms-2">(<%= movie.reviews_count %>)</small>
                 </div>
               </div>
-              
-              <!-- Информация о фильме -->
               <p class="card-text">
                 <small class="text-muted">
                   <i class="bi bi-calendar"></i> <%= movie.year %> г.
                   <% if movie.genre.present? %>
-                    <br><i class="bi bi-tag"></i> <%= movie.genre %>
+                    <br>
+                    <i class="bi bi-tag"></i> <%= movie.genre %>
                   <% end %>
                   <% if movie.duration.present? %>
-                    <br><i class="bi bi-clock"></i> <%= movie.formatted_duration %>
+                    <br>
+                    <i class="bi bi-clock"></i> <%= movie.formatted_duration %>
                   <% end %>
                   <% if movie.country.present? %>
-                    <br><i class="bi bi-globe"></i> <%= movie.country %>
+                    <br>
+                    <i class="bi bi-globe"></i> <%= movie.country %>
                   <% end %>
                 </small>
               </p>
-              
-              <!-- Действия -->
-              <div class="d-flex justify-content-between align-items-center mt-3">
-                <%= link_to "Подробнее", movie_path(movie), class: "btn btn-outline-primary btn-sm" %>
-                <% if user_signed_in? && movie.user == current_user %>
-                  <div class="btn-group">
-                    <%= link_to "Редактировать", edit_movie_path(movie), class: "btn btn-outline-secondary btn-sm" %>
-                    <%= button_to "Удалить", movie_path(movie), 
-                          method: :delete, 
-                          data: { confirm: "Вы уверены?" }, 
-                          class: "btn btn-outline-danger btn-sm" %>
-                  </div>
-                <% end %>
+              <div class="card-footer">
+                <div class="action-buttons">
+                  <%= link_to 'Подробнее', movie, class: 'btn btn-outline-primary' %>
+                  <% if user_signed_in? && movie.user == current_user %>
+                    <%= link_to 'Редактировать', edit_movie_path(movie),
+                      class: 'btn btn-outline-warning' %>
+                    <%= link_to 'Удалить', movie,
+                      method: :delete,
+                      data: { confirm: 'Вы уверены?' },
+                      class: 'btn btn-outline-danger' %>
+                  <% end %>
+                </div>
+              </div>
+              <div class="card-footer text-muted">
+                <small>Добавлено: <%= movie.user.email %></small>
               </div>
             </div>
-            <div class="card-footer text-muted">
-              <small>Добавлено: <%= movie.user.email %></small>
-            </div>
           </div>
-        </div>
-      <% end %>
-    </div>
-  <% else %>
-    <div class="text-center py-5">
-      <i class="bi bi-film display-1 text-muted mb-3"></i>
-      <h4 class="mb-3">Фильмов пока нет</h4>
-      <p class="text-muted mb-4">Будьте первым, кто добавит фильм в каталог!</p>
-      <% if user_signed_in? %>
-        <%= link_to "Добавить первый фильм", new_movie_path, class: "btn btn-primary" %>
-      <% else %>
-        <%= link_to "Войдите, чтобы добавить фильм", new_user_session_path, class: "btn btn-outline-primary" %>
-      <% end %>
-    </div>
-  <% end %>
-</div>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="text-center py-5">
+        <i class="bi bi-film display-1 text-muted mb-3"></i>
+        <h4 class="mb-3">Фильмов пока нет</h4>
+        <p class="text-muted mb-4">Будьте первым, кто добавит фильм в каталог!</p>
+        <% if user_signed_in? %>
+          <%= link_to "Добавить первый фильм", new_movie_path, class: "btn btn-primary" %>
+        <% else %>
+          <%= link_to "Войдите, чтобы добавить фильм", new_user_session_path, class: "btn btn-outline-primary" %>
+        <% end %>
+      </div>
+    <% end %>
+  </div>

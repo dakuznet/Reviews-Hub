@@ -1,0 +1,78 @@
+<div class="container mt-4">
+  <div class="card">
+    <div class="card-body">
+      <div class="d-flex justify-content-between align-items-start mb-3">
+        <div>
+          <h1 class="card-title">
+            <% if @review.reviewable %>
+              Отзыв на: <%= link_to @review.reviewable.title, @review.reviewable %>
+            <% else %>
+              Отзыв
+            <% end %>
+          </h1>
+          <p class="text-muted">
+            <i class="bi bi-person-circle"></i>
+            <%= @review.user.email %>
+            <i class="bi bi-calendar ms-3"></i>
+            <%= @review.created_at.strftime('%d.%m.%Y %H:%M') %>
+          </p>
+        </div>
+        <span class="badge bg-<%= @review.reviewable_type == 'Book' ? 'success' : 'info' %> fs-6">
+          <%= @review.reviewable_type == 'Book' ? ' Книга' : ' Фильм' %>
+        </span>
+      </div>
+      <div class="rating-display mb-4">
+        <h4>Оценка:</h4>
+        <div class="stars fs-1">
+          <% (1..5).each do |star| %>
+            <% if star <= @review.rating %>
+              <i class="bi bi-star-fill text-warning"></i>
+            <% else %>
+              <i class="bi bi-star text-secondary"></i>
+            <% end %>
+          <% end %>
+          <span class="fs-3 ms-3"><strong><%= @review.rating %> / 5</strong></span>
+        </div>
+      </div>
+      <div class="review-content mb-4">
+        <h4>Текст отзыва:</h4>
+        <div class="card bg-light p-4">
+          <%= simple_format(@review.text) %>
+        </div>
+      </div>
+      <div class="d-flex justify-content-between">
+        <div>
+          <%= link_to 'Назад',
+              (@review.reviewable || reviews_path),
+              class: 'btn btn-secondary' %>
+        </div>
+        <% if user_signed_in? && @review.user == current_user %>
+          <div>
+            <% if @review.reviewable_type == 'Book' %>
+              <%= link_to 'Редактировать',
+                  edit_book_review_path(@review.reviewable, @review),
+                  class: 'btn btn-primary' %>
+            <% elsif @review.reviewable_type == 'Movie' %>
+              <%= link_to 'Редактировать',
+                  edit_movie_review_path(@review.reviewable, @review),
+                  class: 'btn btn-primary' %>
+            <% end %>
+            <% if @review.reviewable_type == 'Book' %>
+              <%= button_to 'Удалить',
+                  book_review_path(@review.reviewable, @review),
+                  method: :delete,
+                  data: { confirm: 'Вы уверены, что хотите удалить этот отзыв?' },
+                  class: 'btn btn-danger' %>
+            <% elsif @review.reviewable_type == 'Movie' %>
+              <%= button_to 'Удалить',
+                  movie_review_path(@review.reviewable, @review),
+                  method: :delete,
+                  data: { confirm: 'Вы уверены, что хотите удалить этот отзыв?' },
+                  class: 'btn btn-danger' %>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

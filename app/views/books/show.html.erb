@@ -1,25 +1,10 @@
 <div class="container mt-4">
-  <!-- Хлебные крошки -->
-  <nav aria-label="breadcrumb" class="mb-4">
-    <ol class="breadcrumb">
-      <li class="breadcrumb-item"><%= link_to "Книги", books_path %></li>
-      <li class="breadcrumb-item active"><%= @book.title %></li>
-    </ol>
-  </nav>
-
   <div class="row">
-    <!-- Левая колонка: информация о книге -->
     <div class="col-lg-8">
       <div class="card mb-4">
         <div class="row g-0">
-          <% if @book.url.present? %>
-            <div class="col-md-4">
-              <img src="<%= @book.url %>" class="img-fluid rounded-start" alt="<%= @book.title %>">
-            </div>
-          <% end %>
           <div class="<%= @book.url.present? ? 'col-md-8' : 'col-12' %>">
             <div class="card-body">
-              <!-- Заголовок и действия -->
               <div class="d-flex justify-content-between align-items-start mb-3">
                 <div>
                   <h1 class="card-title h2 mb-2"><%= @book.title %></h1>
@@ -35,8 +20,6 @@
                   </div>
                 <% end %>
               </div>
-
-              <!-- Рейтинг -->
               <div class="rating-section mb-4">
                 <div class="d-flex align-items-center">
                   <div class="average-rating me-4">
@@ -59,8 +42,6 @@
                   </div>
                 </div>
               </div>
-
-              <!-- Детали книги -->
               <div class="book-details mb-4">
                 <h5 class="mb-3">Информация о книге</h5>
                 <div class="row">
@@ -90,16 +71,12 @@
                   <% end %>
                 </div>
               </div>
-
-              <!-- Описание -->
               <% if @book.description.present? %>
                 <div class="description mb-4">
                   <h5 class="mb-3">Описание</h5>
                   <p class="card-text"><%= simple_format(@book.description) %></p>
                 </div>
               <% end %>
-
-              <!-- Автор записи -->
               <div class="card-footer bg-transparent border-top">
                 <div class="d-flex justify-content-between align-items-center">
                   <div>
@@ -118,13 +95,9 @@
           </div>
         </div>
       </div>
-
-      <!-- Секция отзывов -->
       <div class="reviews-section">
         <h3 class="mb-4">Отзывы</h3>
-        
         <% if user_signed_in? %>
-          <!-- Форма для нового отзыва -->
           <div class="card mb-4">
             <div class="card-header">
               <h5 class="mb-0">Оставить отзыв</h5>
@@ -162,8 +135,6 @@
             </p>
           </div>
         <% end %>
-
-        <!-- Список отзывов -->
         <% if @reviews.any? %>
           <% @reviews.each do |review| %>
             <div class="card mb-3">
@@ -185,13 +156,15 @@
                   <div>
                     <small class="text-muted"><%= l(review.created_at, format: :short) %></small>
                     <% if user_signed_in? && review.user == current_user %>
-                      <div class="mt-2">
-                        <%= link_to "Редактировать", edit_book_review_path(@book, review), 
+                      <div class="card-footer">
+                        <div class="action-buttons">
+                          <%= link_to "Редактировать", edit_book_review_path(@book, review), 
                               class: "btn btn-sm btn-outline-primary me-1" %>
-                        <%= button_to "Удалить", book_review_path(@book, review), 
+                          <%= button_to "Удалить", book_review_path(@book, review), 
                               method: :delete, 
                               data: { confirm: "Вы уверены?" }, 
                               class: "btn btn-sm btn-outline-danger" %>
+                        </div>
                       </div>
                     <% end %>
                   </div>
@@ -207,108 +180,41 @@
         <% end %>
       </div>
     </div>
-
-    <!-- Правая колонка: действия и похожие книги -->
-    <div class="col-lg-4">
-      <div class="sticky-top" style="top: 20px;">
-        <!-- Действия -->
-        <div class="card mb-4">
-          <div class="card-header">
-            <h5 class="mb-0">Действия</h5>
-          </div>
-          <div class="card-body">
-            <% if user_signed_in? %>
-              <%= link_to "Оставить отзыв", new_book_review_path(@book), class: "btn btn-primary w-100 mb-2" %>
-            <% else %>
-              <%= link_to "Войдите, чтобы оставить отзыв", new_user_session_path, class: "btn btn-outline-primary w-100 mb-2" %>
-            <% end %>
-            <%= link_to "Все книги", books_path, class: "btn btn-outline-secondary w-100 mb-2" %>
-            <% if user_signed_in? && @book.user == current_user %>
-              <%= link_to "Редактировать книгу", edit_book_path(@book), class: "btn btn-outline-warning w-100" %>
-            <% end %>
-          </div>
-        </div>
-
-        <!-- Похожие книги -->
-        <% if @book.genre.present? %>
-          <% similar_books = Book.where(genre: @book.genre).where.not(id: @book.id).limit(3) %>
-          <% if similar_books.any? %>
-            <div class="card">
-              <div class="card-header">
-                <h5 class="mb-0">Похожие книги</h5>
-              </div>
-              <div class="card-body">
-                <% similar_books.each do |book| %>
-                  <div class="d-flex mb-3">
-                    <% if book.url.present? %>
-                      <img src="<%= book.url %>" class="rounded me-3" style="width: 60px; height: 90px; object-fit: cover;" alt="<%= book.title %>">
-                    <% else %>
-                      <div class="rounded bg-light d-flex align-items-center justify-content-center me-3" style="width: 60px; height: 90px;">
-                        <i class="bi bi-book text-secondary"></i>
-                      </div>
-                    <% end %>
-                    <div>
-                      <h6 class="mb-1"><%= link_to book.title, book_path(book), class: "text-decoration-none" %></h6>
-                      <p class="text-muted small mb-1"><%= book.author %></p>
-                      <div class="d-flex align-items-center">
-                        <div class="rating small">
-                          <% (1..5).each do |star| %>
-                            <% if star <= book.average_rating.round %>
-                              <i class="bi bi-star-fill text-warning" style="font-size: 0.8rem;"></i>
-                            <% else %>
-                              <i class="bi bi-star text-secondary" style="font-size: 0.8rem;"></i>
-                            <% end %>
-                          <% end %>
-                        </div>
-                        <small class="text-muted ms-1"><%= book.average_rating %></small>
-                      </div>
-                    </div>
-                  </div>
-                <% end %>
-              </div>
-            </div>
-          <% end %>
-        <% end %>
-      </div>
-    </div>
   </div>
 </div>
-
-<!-- Стили и скрипт для звезд -->
 <style>
   .rating-input {
     display: flex;
     gap: 10px;
   }
-  
+
   .star-label {
     cursor: pointer;
   }
-  
+
   .star-icon {
     font-size: 32px;
     color: #dee2e6;
     transition: color 0.2s;
   }
-  
+
   .star-icon:hover {
     color: #ffc107;
   }
-  
+
   .bi-star-fill {
     color: #ffc107;
   }
 </style>
-
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     const stars = document.querySelectorAll('.star-icon');
     const ratingInput = document.querySelectorAll('input[name="review[rating]"]');
-    
+
     stars.forEach(star => {
       star.addEventListener('click', function() {
         const value = parseInt(this.dataset.value);
-        
+
         stars.forEach((s, index) => {
           if (index < value) {
             s.classList.remove('bi-star');
@@ -318,7 +224,7 @@
             s.classList.add('bi-star');
           }
         });
-        
+
         ratingInput[value - 1].checked = true;
       });
     });

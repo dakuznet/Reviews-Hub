@@ -3,11 +3,6 @@
     <%= link_to root_path, class: "navbar-brand" do %>
       <i class="bi bi-chat-square-text-fill me-2"></i> Reviews Hub
     <% end %>
-    <% if user_signed_in? %>
-      <%= link_to "Создать отзыв", "#", class: "btn btn-primary me-3" %>
-    <% else %>
-      <%= link_to "Создать отзыв", new_user_session_path, class: "btn btn-outline-primary me-3" %>
-    <% end %>
     <form class="search-form d-flex">
       <input class="form-control me-2" type="search" placeholder="Поиск..." aria-label="Поиск">
       <button class="btn btn-outline-secondary" type="submit">Найти</button>
