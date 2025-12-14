@@ -1,29 +1,666 @@
+<style>
+  /* Основные цвета */
+  :root {
+    --primary-color: #8d1d2c;
+    --primary-light: #8d1d2cc2;
+    --text-color: #333333;
+    --text-light: #666666;
+    --bg-color: #f9f7f5;
+    --white: #ffffff;
+    --border-color: #e8e4e0;
+    --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    --shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.08);
+  }
+
+  body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    line-height: 1.6;
+  }
+
+  .navbar-top {
+    width: 100%;
+    padding: 15px 0;
+    background-color: var(--white);
+    box-shadow: var(--shadow);
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .navbar-top-content {
+    width: 90%;
+    max-width: 1200px;
+    height: 60px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .navbar-top-content a[href="/"] {
+    font-size: 1.8rem;
+    font-weight: 300;
+    color: var(--primary-color);
+    text-decoration: none;
+    letter-spacing: -0.5px;
+    transition: opacity 0.2s;
+  }
+
+  .navbar-top-content a[href="/"]:hover {
+    opacity: 0.8;
+  }
+
+  .navbar-top-content .btn-primary,
+  .navbar-top-content .btn-outline-primary {
+    padding: 8px 20px;
+    border-radius: 4px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    border: 1px solid var(--primary-color);
+  }
+
+  .navbar-top-content .btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+  }
+
+  .navbar-top-content .btn-primary:hover {
+    background-color: var(--primary-light);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-hover);
+  }
+
+  .navbar-top-content .btn-outline-primary {
+    background-color: transparent;
+    color: var(--primary-color);
+  }
+
+  .navbar-top-content .btn-outline-primary:hover {
+    background-color: var(--primary-light);
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-hover);
+  }
+
+  .search-form {
+    flex-grow: 1;
+    max-width: 400px;
+    margin: 0 20px;
+  }
+
+  .search-form input {
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 10px 16px;
+    font-size: 0.95rem;
+    transition: all 0.2s;
+  }
+
+  .search-form input:focus {
+    outline: none;
+    border-color: var(--primary-light);
+    box-shadow: 0 0 0 3px rgba(141, 29, 44, 0.1);
+  }
+
+  .search-form button {
+    background-color: var(--white);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 10px 20px;
+    color: var(--text-light);
+    font-weight: 500;
+    transition: all 0.2s;
+  }
+
+  .search-form button:hover {
+    background-color: var(--primary-light);
+    color: white;
+    border-color: var(--primary-light);
+  }
+
+  /* Нижний navbar */
+  .navbar-bottom {
+    width: 100%;
+    padding: 12px 0;
+    background-color: var(--white);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  }
+
+  .navbar-bottom-content {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .navbar-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+  }
+
+  .navbar-links li {
+    margin-right: 80px;
+  }
+
+  .navbar-links li:last-child {
+    margin-right: 0px;
+  }
+
+  .navbar-links a {
+    text-decoration: none;
+    color: var(--text-light);
+    font-size: 1.1rem;
+    font-weight: 500;
+    padding: 8px 0;
+    position: relative;
+    transition: color 0.2s;
+  }
+
+  .navbar-links a:hover {
+    color: var(--primary-color);
+  }
+
+  .navbar-links a.active {
+    color: var(--primary-color);
+    font-weight: 600;
+  }
+
+  .navbar-links a.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: var(--primary-color);
+  }
+
+  .card {
+    border: none;
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    transition: all 0.3s ease;
+    background-color: var(--white);
+    overflow: hidden;
+  }
+
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-hover);
+  }
+
+  .card-body {
+    padding: 1.5rem;
+  }
+
+  .card-title {
+    color: var(--text-color);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    font-size: 1.25rem;
+  }
+
+  .card-subtitle {
+    color: var(--primary-light);
+    font-size: 0.95rem;
+    font-weight: 500;
+  }
+
+  .card-text {
+    color: var(--text-light);
+    margin: 1rem 0;
+    line-height: 1.7;
+  }
+
+  .card-text.text-muted small {
+    color: #888888;
+    font-size: 0.9rem;
+  }
+
+  /* Бейджи */
+  .badge {
+    padding: 6px 12px;
+    font-weight: 500;
+    font-size: 0.8rem;
+    border-radius: 4px;
+  }
+
+  .badge.bg-success {
+    background-color: rgba(141, 29, 44, 0.1) !important;
+    color: var(--primary-color) !important;
+    border: 1px solid rgba(141, 29, 44, 0.2);
+  }
+
+  .badge.bg-info {
+    background-color: rgba(33, 150, 243, 0.1) !important;
+    color: #2196F3 !important;
+    border: 1px solid rgba(33, 150, 243, 0.2);
+  }
+
+  /* Кнопки в карточках */
+  .btn-sm {
+    padding: 6px 16px;
+    font-size: 0.9rem;
+    border-radius: 4px;
+    transition: all 0.2s;
+  }
+
+  .btn-outline-primary {
+    border: 1px solid var(--primary-color);
+    color: var(--primary-color);
+    background-color: transparent;
+  }
+
+  .btn-outline-primary:hover {
+    background-color: var(--primary-color);
+    color: white;
+  }
+
+  /* Иконки звезд */
+  .text-warning {
+    color: #FFB74D !important;
+  }
+
+  /* Контейнеры */
+  .container {
+    background-color: transparent;
+  }
+
+  .container.py-5 {
+    padding-top: 3rem !important;
+    padding-bottom: 3rem !important;
+  }
+
+  /* Заголовки */
+  h1 {
+    color: var(--text-color);
+    font-weight: 300;
+    letter-spacing: -0.5px;
+  }
+
+  .display-4 {
+    font-weight: 300;
+    font-size: 2.5rem;
+  }
+
+  /* Поле ввода поиска на страницах */
+  .input-group input {
+    border: 1px solid var(--border-color);
+    border-radius: 4px 0 0 4px;
+    padding: 12px 16px;
+    font-size: 1rem;
+  }
+
+  .input-group input:focus {
+    outline: none;
+    border-color: var(--primary-light);
+    box-shadow: 0 0 0 3px rgba(141, 29, 44, 0.1);
+  }
+
+  .input-group button {
+    background-color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+    color: white;
+    padding: 12px 24px;
+    font-weight: 500;
+    border-radius: 0 4px 4px 0;
+    transition: all 0.2s;
+  }
+
+  .input-group button:hover {
+    background-color: var(--primary-light);
+  }
+
+  .dropdown {
+    position: relative;
+    display: inline-block;
+  }
+
+  .dropdown-toggle {
+    display: inline-flex;
+    align-items: center;
+    height: 40px;
+    padding: 8px 16px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background-color: var(--white);
+    color: var(--text-color);
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+  }
+
+  .dropdown-toggle:hover {
+    border-color: var(--primary-light);
+    background-color: rgba(141, 29, 44, 0.05);
+  }
+
+  .dropdown-menu {
+    position: absolute;
+    top: calc(100% + 5px);
+    right: 0;
+    min-width: 180px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-5px);
+    transition: all 0.2s ease;
+    pointer-events: none;
+    z-index: 1000;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+    padding: 8px 0;
+    background-color: var(--white);
+    list-style: none;
+    margin: 0;
+  }
+
+  .dropdown:hover .dropdown-menu,
+  .dropdown:focus-within .dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  .dropdown-item {
+    display: block;
+    padding: 12px 20px;
+    color: var(--text-color);
+    font-weight: 400;
+    font-size: 0.95rem;
+    transition: all 0.15s ease;
+    text-decoration: none;
+    line-height: 1.4;
+  }
+
+  .dropdown-item:hover {
+    background-color: rgba(141, 29, 44, 0.08);
+    color: var(--primary-color);
+  }
+
+  .dropdown-divider {
+    height: 1px;
+    margin: 4px 16px;
+    background-color: rgba(0, 0, 0, 0.08);
+    border: none;
+  }
+
+  .dropdown-item:active {
+    background-color: rgba(141, 29, 44, 0.12);
+  }
+
+  .btn-outline-secondary {
+    border: 1px solid var(--border-color);
+    color: var(--text-light);
+    padding: 10px 24px;
+    border-radius: 4px;
+    transition: all 0.2s;
+  }
+
+  .btn-outline-secondary:hover {
+    background-color: var(--primary-light);
+    color: white;
+    border-color: var(--primary-light);
+  }
+
+  .bi-person-circle, .bi-calendar {
+    color: var(--primary-light);
+  }
+
+  .user-controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    height: 40px;
+  }
+
+  .devise-container {
+  max-width: 480px;
+  margin: 40px auto;
+  padding: 30px;
+  background-color: var(--white);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  }
+
+  .devise-container h2 {
+  color: var(--primary-color);
+  font-weight: 300;
+  margin-bottom: 30px;
+  text-align: center;
+  font-size: 1.8rem;
+  letter-spacing: -0.5px;
+  }
+
+  .devise-form .field {
+  margin-bottom: 20px;
+  }
+
+  .devise-form label {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--text-color);
+  font-weight: 500;
+  font-size: 0.95rem;
+  }
+
+  .devise-form input[type="email"],
+  .devise-form input[type="password"],
+  .devise-form input[type="text"] {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 1rem;
+  color: var(--text-color);
+  background-color: var(--white);
+  transition: all 0.2s ease;
+  }
+
+  .devise-form input:focus {
+    outline: none;
+    border-color: var(--primary-light);
+    box-shadow: 0 0 0 3px rgba(141, 29, 44, 0.1);
+  }
+
+  .devise-form .actions {
+    margin-top: 30px;
+    text-align: center;
+  }
+
+  .devise-form input[type="submit"] {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    font-size: 1rem;
+    font-weight: 500;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    width: 100%;
+  }
+
+  .devise-form input[type="submit"]:hover {
+  background-color: var(--primary-light);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-hover);
+  }
+
+  .field.checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .field.checkbox input[type="checkbox"] {
+    width: auto;
+    margin: 0;
+  }
+
+  .field.checkbox label {
+    margin: 0;
+    font-weight: 400;
+  }
+
+  .devise-links {
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
+    text-align: center;
+  }
+
+  .devise-links a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s ease;
+    display: inline-block;
+    margin: 0 8px;
+    font-size: 0.95rem;
+  }
+
+  .devise-links a:hover {
+    color: var(--primary-light);
+    text-decoration: underline;
+  }
+
+  #error_explanation {
+    background-color: rgba(244, 67, 54, 0.1);
+    border-left: 4px solid #F44336;
+    padding: 15px 20px;
+    margin-bottom: 25px;
+    border-radius: 6px;
+  }
+
+  #error_explanation h2 {
+    color: #C62828;
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+    text-align: left;
+  }
+
+  #error_explanation ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  #error_explanation li {
+    color: #C62828;
+    font-size: 0.9rem;
+    margin-bottom: 5px;
+  }
+
+  #error_explanation li:last-child {
+    margin-bottom: 0;
+  }
+
+  .devise-container h3 {
+    color: var(--text-color);
+    font-weight: 400;
+    margin-top: 40px;
+    padding-top: 30px;
+    border-top: 1px solid var(--border-color);
+  }
+
+  .devise-container .button_to {
+    margin-top: 15px;
+  }
+
+  .devise-container .button_to button {
+    background-color: rgba(244, 67, 54, 0.1);
+    color: #C62828;
+    border: 1px solid rgba(244, 67, 54, 0.3);
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    width: 100%;
+    font-size: 1rem;
+  }
+
+  .devise-container .button_to button:hover {
+    background-color: rgba(244, 67, 54, 0.2);
+    ransform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(244, 67, 54, 0.15);
+  }
+
+  .devise-container div {
+    background-color: rgba(33, 150, 243, 0.1);
+    color: #1976D2;
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    font-size: 0.95rem;
+  }
+
+  .devise-form em {
+    display: block;
+    margin-top: 6px;
+    color: var(--text-light);
+    font-size: 0.9rem;
+    font-style: normal;
+  }
+
+  @media (max-width: 576px) {
+  .devise-container {
+    margin: 20px 15px;
+    padding: 20px;
+    box-shadow: none;
+    border: 1px solid var(--border-color);
+  }
+  }
+
+    .alert {
+    border: none;
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow);
+  }
+
+  .alert-success {
+    background-color: rgba(76, 175, 80, 0.1);
+    color: #2E7D32;
+    border-left: 4px solid #4CAF50;
+  }
+
+  .alert-danger {
+    background-color: rgba(244, 67, 54, 0.1);
+    color: #C62828;
+    border-left: 4px solid #F44336;
+  }
+</style>
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= content_for(:title) || "Reviews Hub" %></title>
+    <title>Reviews Hub</title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="Reviews Hub">
-    <meta name="mobile-web-app-capable" content="yes">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
-
-    <%= yield :head %>
-
-    <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
-    <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
-
-    <link rel="icon" href="/icon.png" type="image/png">
-    <link rel="icon" href="/icon.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="/icon.png">
-
-    <%# Includes all stylesheet files in app/assets/stylesheets %>
-    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
   </head>
-
   <body>
-    <%= yield %>
+    <%= render 'layouts/navbar' %>
+    <main class="mt-4">
+      <% if notice %>
+        <p class="alert alert-success"><%= notice %></p>
+      <% end %>
+      <% if alert %>
+        <p class="alert alert-danger"><%= alert %></p>
+      <% end %>
+      <%= yield %>
+    </main>
   </body>
 </html>
