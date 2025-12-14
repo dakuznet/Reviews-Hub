@@ -1,103 +1,109 @@
 class ReviewsController < ApplicationController
   before_action :authenticate_user!, except: [:index, :show]
-  before_action :set_reviewable, only: [:new, :create]
-  before_action :set_review, only: [:edit, :update, :destroy]
-  before_action :check_owner, only: [:edit, :update, :destroy]
-
-  # GET /reviews
-  def index
-    # Проверяем, существует ли таблица reviews
-    if Review.table_exists?
-      @reviews = Review.includes(:user, :reviewable).order(created_at: :desc)
-    else
-      @reviews = []
-      flash.now[:alert] = 'Таблица отзывов еще не создана.'
-    end
-  end
-
-  # GET /reviews/1
-  def show
-    @review = Review.find(params[:id])
-  rescue ActiveRecord::RecordNotFound
-    redirect_to reviews_path, alert: 'Отзыв не найден.'
-  end
-
-  # GET /reviews/new
+  
+  # GET /books/:book_id/reviews/new
+  # GET /movies/:movie_id/reviews/new
   def new
+    # Определяем, к какой модели относится отзыв
+    if params[:book_id]
+      @reviewable = Book.find(params[:book_id])
+    elsif params[:movie_id]
+      @reviewable = Movie.find(params[:movie_id])
+    else
+      redirect_to root_path, alert: "Не указана модель для отзыва"
+      return
+    end
+    
     @review = @reviewable.reviews.new
   end
-
-  # GET /reviews/1/edit
-  def edit
-  end
-
-  # POST /reviews
+  
+  # POST /books/:book_id/reviews
+  # POST /movies/:movie_id/reviews
   def create
+    if params[:book_id]
+      @reviewable = Book.find(params[:book_id])
+    elsif params[:movie_id]
+      @reviewable = Movie.find(params[:movie_id])
+    else
+      redirect_to root_path, alert: "Не указана модель для отзыва"
+      return
+    end
+    
     @review = @reviewable.reviews.new(review_params)
     @review.user = current_user
-
+    
     if @review.save
-      redirect_to polymorphic_path(@reviewable), notice: 'Отзыв успешно создан.'
+      redirect_to @reviewable, notice: "Отзыв успешно добавлен!"
     else
-      render :new, status: :unprocessable_entity
+      render :new
     end
   end
-
-  # PATCH/PUT /reviews/1
+  
+  # GET /reviews
+  def index
+    @reviews = Review.includes(:user, :reviewable)
+                     .order(created_at: :desc)
+                     .page(params[:page])
+  end
+  
+  # GET /reviews/:id
+  def show
+    @review = Review.includes(:user, :reviewable).find(params[:id])
+  end
+  
+  # GET /books/:book_id/reviews/:id/edit
+  # GET /movies/:movie_id/reviews/:id/edit
+  def edit
+    @review = Review.find(params[:id])
+    
+    # Проверяем, что пользователь - автор отзыва
+    if @review.user != current_user
+      redirect_to @review.reviewable, alert: "Вы не можете редактировать чужой отзыв"
+      return
+    end
+    
+    # Определяем reviewable объект
+    @reviewable = @review.reviewable
+  end
+  
+  # PATCH /books/:book_id/reviews/:id
+  # PATCH /movies/:movie_id/reviews/:id
   def update
+    @review = Review.find(params[:id])
+    
+    # Проверяем, что пользователь - автор отзыва
+    if @review.user != current_user
+      redirect_to @review.reviewable, alert: "Вы не можете редактировать чужой отзыв"
+      return
+    end
+    
     if @review.update(review_params)
-      redirect_to polymorphic_path(@review.reviewable), notice: 'Отзыв успешно обновлен.'
+      redirect_to @review.reviewable, notice: "Отзыв успешно обновлен!"
     else
-      render :edit, status: :unprocessable_entity
+      @reviewable = @review.reviewable
+      render :edit
     end
   end
-
-  # DELETE /reviews/1
+  
+  # DELETE /books/:book_id/reviews/:id
+  # DELETE /movies/:movie_id/reviews/:id
   def destroy
+    @review = Review.find(params[:id])
+    
+    # Проверяем, что пользователь - автор отзыва
+    if @review.user != current_user
+      redirect_to @review.reviewable, alert: "Вы не можете удалить чужой отзыв"
+      return
+    end
+    
     @reviewable = @review.reviewable
     @review.destroy
-    redirect_to polymorphic_path(@reviewable), notice: 'Отзыв успешно удален.'
+    
+    redirect_to @reviewable, notice: "Отзыв успешно удален!"
   end
-
+  
   private
-
-  def set_reviewable
-    # Определяем тип объекта (Book или Movie) по параметрам
-    if params[:book_id]
-      # Для теста создаем заглушку книги
-      @reviewable = OpenStruct.new(
-        id: params[:book_id],
-        title: "Книга #{params[:book_id]}",
-        class: OpenStruct.new(name: 'Book'),
-        is_a?: ->(klass) { klass == Book || klass.to_s == 'Book' }
-      )
-      @reviewable_type = 'Book'
-    elsif params[:movie_id]
-      # Для теста создаем заглушку фильма
-      @reviewable = OpenStruct.new(
-        id: params[:movie_id],
-        title: "Фильм #{params[:movie_id]}",
-        class: OpenStruct.new(name: 'Movie'),
-        is_a?: ->(klass) { klass == Movie || klass.to_s == 'Movie' }
-      )
-      @reviewable_type = 'Movie'
-    else
-      redirect_to root_path, alert: 'Неверный запрос.'
-    end
-  end
-
-  def set_review
-    @review = Review.find(params[:id])
-  rescue ActiveRecord::RecordNotFound
-    redirect_to reviews_path, alert: 'Отзыв не найден.'
-  end
-
-  def check_owner
-    unless @review.user == current_user
-      redirect_to root_path, alert: 'У вас нет прав для выполнения этого действия.'
-    end
-  end
-
+  
   def review_params
     params.require(:review).permit(:rating, :text)
   end

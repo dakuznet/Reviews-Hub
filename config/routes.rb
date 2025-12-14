@@ -5,23 +5,14 @@ Rails.application.routes.draw do
   # Маршруты для аутентификации
   devise_for :users
 
-  # Ресурсные маршруты для книг и фильмов
+  # Ресурсные маршруты для книг
   resources :books do
-    resources :reviews, only: [:create, :destroy, :edit, :update]
-    
-    # Коллекция для поиска
-    collection do
-      get :search
-    end
+    resources :reviews, only: [:new, :create, :destroy, :edit, :update]  # Добавляем :new
   end
 
+  # Ресурсные маршруты для фильмов
   resources :movies do
-    resources :reviews, only: [:create, :destroy, :edit, :update]
-    
-    # Коллекция для поиска
-    collection do
-      get :search
-    end
+    resources :reviews, only: [:new, :create, :destroy, :edit, :update]  # Добавляем :new
   end
 
   # Отдельные маршруты для отзывов
