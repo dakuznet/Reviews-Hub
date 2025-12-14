@@ -1,15 +1,8 @@
 class PagesController < ApplicationController
   def home
-    # Можно добавить несколько последних отзывов на главную
-    @reviews = Review.includes(:user, :reviewable).order(created_at: :desc).limit(5) if Review.table_exists?
-  end
-
-  def books
-    # Этот метод будет обновлен на следующем этапе
-  end
-
-  def movies
-    # Этот метод будет обновлен на следующем этапе
+    # Получаем последние книги и фильмы для главной страницы
+    @latest_movies = Movie.includes(:reviews).order(created_at: :desc).limit(3)
+    @latest_reviews = Review.includes(:user, :reviewable).order(created_at: :desc).limit(5)
   end
 
   # Временный метод для отображения книги

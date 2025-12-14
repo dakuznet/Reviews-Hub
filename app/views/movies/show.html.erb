@@ -1,0 +1,293 @@
+<div class="container mt-4">
+  <!-- Хлебные крошки -->
+  <nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><%= link_to "Фильмы", movies_path %></li>
+      <li class="breadcrumb-item active"><%= @movie.title %></li>
+    </ol>
+  </nav>
+
+  <div class="row">
+    <!-- Левая колонка: информация о фильме -->
+    <div class="col-lg-8">
+      <div class="card mb-4">
+        <div class="row g-0">
+          <% if @movie.url.present? %>
+            <div class="col-md-4">
+              <img src="<%= @movie.url %>" class="img-fluid rounded-start" alt="<%= @movie.title %>">
+            </div>
+          <% end %>
+          <div class="<%= @movie.url.present? ? 'col-md-8' : 'col-12' %>">
+            <div class="card-body">
+              <!-- Заголовок и действия -->
+              <div class="d-flex justify-content-between align-items-start mb-3">
+                <div>
+                  <h1 class="card-title h2 mb-2"><%= @movie.title %></h1>
+                  <h2 class="card-subtitle h4 text-muted">Режиссер: <%= @movie.director %></h2>
+                </div>
+                <% if user_signed_in? && @movie.user == current_user %>
+                  <div class="btn-group">
+                    <%= link_to "Редактировать", edit_movie_path(@movie), class: "btn btn-outline-primary" %>
+                    <%= button_to "Удалить", movie_path(@movie), 
+                          method: :delete, 
+                          data: { confirm: "Вы уверены, что хотите удалить этот фильм?" }, 
+                          class: "btn btn-outline-danger" %>
+                  </div>
+                <% end %>
+              </div>
+
+              <!-- Рейтинг -->
+              <div class="rating-section mb-4">
+                <div class="d-flex align-items-center">
+                  <div class="average-rating me-4">
+                    <span class="display-4"><strong><%= @movie.average_rating %></strong></span>
+                    <span class="text-muted">/5</span>
+                  </div>
+                  <div class="stars me-4">
+                    <% (1..5).each do |star| %>
+                      <% if star <= @movie.average_rating.round %>
+                        <i class="bi bi-star-fill text-warning fs-3"></i>
+                      <% elsif star - 0.5 <= @movie.average_rating %>
+                        <i class="bi bi-star-half text-warning fs-3"></i>
+                      <% else %>
+                        <i class="bi bi-star text-secondary fs-3"></i>
+                      <% end %>
+                    <% end %>
+                  </div>
+                  <div class="reviews-count">
+                    <span class="badge bg-secondary fs-6"><%= @movie.reviews_count %> отзывов</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Детали фильма -->
+              <div class="movie-details mb-4">
+                <h5 class="mb-3">Информация о фильме</h5>
+                <div class="row">
+                  <% if @movie.year.present? %>
+                    <div class="col-md-6 mb-2">
+                      <strong><i class="bi bi-calendar me-2"></i>Год выпуска:</strong>
+                      <span><%= @movie.year %></span>
+                    </div>
+                  <% end %>
+                  <% if @movie.duration.present? %>
+                    <div class="col-md-6 mb-2">
+                      <strong><i class="bi bi-clock me-2"></i>Длительность:</strong>
+                      <span><%= @movie.formatted_duration %></span>
+                    </div>
+                  <% end %>
+                  <% if @movie.genre.present? %>
+                    <div class="col-md-6 mb-2">
+                      <strong><i class="bi bi-tag me-2"></i>Жанр:</strong>
+                      <span><%= @movie.genre %></span>
+                    </div>
+                  <% end %>
+                  <% if @movie.country.present? %>
+                    <div class="col-md-6 mb-2">
+                      <strong><i class="bi bi-globe me-2"></i>Страна:</strong>
+                      <span><%= @movie.country %></span>
+                    </div>
+                  <% end %>
+                  <% if @movie.screenwriter.present? %>
+                    <div class="col-md-6 mb-2">
+                      <strong><i class="bi bi-pencil me-2"></i>Сценарист:</strong>
+                      <span><%= @movie.screenwriter %></span>
+                    </div>
+                  <% end %>
+                  <% if @movie.producer.present? %>
+                    <div class="col-md-6 mb-2">
+                      <strong><i class="bi bi-person-video me-2"></i>Продюсер:</strong>
+                      <span><%= @movie.producer %></span>
+                    </div>
+                  <% end %>
+                  <% if @movie.studio.present? %>
+                    <div class="col-md-12 mb-2">
+                      <strong><i class="bi bi-building me-2"></i>Студия:</strong>
+                      <span><%= @movie.studio %></span>
+                    </div>
+                  <% end %>
+                </div>
+              </div>
+
+              <!-- Описание -->
+              <% if @movie.description.present? %>
+                <div class="description mb-4">
+                  <h5 class="mb-3">Описание</h5>
+                  <p class="card-text"><%= simple_format(@movie.description) %></p>
+                </div>
+              <% end %>
+
+              <!-- Автор записи -->
+              <div class="card-footer bg-transparent border-top">
+                <div class="d-flex justify-content-between align-items-center">
+                  <div>
+                    <small class="text-muted">
+                      Добавлено пользователем: <strong><%= @movie.user.email %></strong>
+                    </small>
+                  </div>
+                  <div>
+                    <small class="text-muted">
+                      <%= l(@movie.created_at, format: :long) %>
+                    </small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Секция отзывов -->
+      <div class="reviews-section">
+        <h3 class="mb-4">Отзывы</h3>
+        
+        <% if user_signed_in? %>
+          <!-- Форма для нового отзыва -->
+          <div class="card mb-4">
+            <div class="card-header">
+              <h5 class="mb-0">Оставить отзыв</h5>
+            </div>
+            <div class="card-body">
+              <%= form_with(model: [@movie, @review], local: true) do |f| %>
+                <div class="mb-3">
+                  <%= f.label :rating, "Ваша оценка", class: "form-label" %>
+                  <div class="rating-input">
+                    <% (1..5).each do |star| %>
+                      <label class="star-label">
+                        <%= f.radio_button :rating, star, class: "d-none" %>
+                        <i class="bi bi-star<%= star <= (@review.rating || 0) ? '-fill' : '' %> star-icon" 
+                           data-value="<%= star %>"></i>
+                      </label>
+                    <% end %>
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <%= f.label :text, "Текст отзыва", class: "form-label" %>
+                  <%= f.text_area :text, class: "form-control", rows: 4, 
+                        placeholder: "Напишите ваш отзыв (минимум 10 символов)", required: true %>
+                </div>
+                <div class="d-flex justify-content-end">
+                  <%= f.submit "Оставить отзыв", class: "btn btn-primary" %>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        <% else %>
+          <div class="alert alert-info">
+            <p class="mb-0">
+              <%= link_to "Войдите", new_user_session_path %> или 
+              <%= link_to "зарегистрируйтесь", new_user_registration_path %>, чтобы оставить отзыв
+            </p>
+          </div>
+        <% end %>
+
+        <!-- Список отзывов -->
+        <% if @reviews.any? %>
+          <% @reviews.each do |review| %>
+            <div class="card mb-3">
+              <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                  <div>
+                    <h6 class="card-title mb-1"><%= review.user.email %></h6>
+                    <div class="rating mb-2">
+                      <% (1..5).each do |star| %>
+                        <% if star <= review.rating %>
+                          <i class="bi bi-star-fill text-warning"></i>
+                        <% else %>
+                          <i class="bi bi-star text-secondary"></i>
+                        <% end %>
+                      <% end %>
+                      <span class="ms-2"><strong><%= review.rating %>/5</strong></span>
+                    </div>
+                  </div>
+                  <div>
+                    <small class="text-muted"><%= l(review.created_at, format: :short) %></small>
+                    <% if user_signed_in? && review.user == current_user %>
+                      <div class="mt-2">
+                        <%= link_to "Редактировать", edit_movie_review_path(@movie, review), 
+                              class: "btn btn-sm btn-outline-primary me-1" %>
+                        <%= button_to "Удалить", movie_review_path(@movie, review), 
+                              method: :delete, 
+                              data: { confirm: "Вы уверены?" }, 
+                              class: "btn btn-sm btn-outline-danger" %>
+                      </div>
+                    <% end %>
+                  </div>
+                </div>
+                <p class="card-text"><%= simple_format(review.text) %></p>
+              </div>
+            </div>
+          <% end %>
+        <% else %>
+          <div class="alert alert-info">
+            <p class="mb-0">Пока нет отзывов на этот фильм. Будьте первым!</p>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Правая колонка: действия и похожие фильмы -->
+    <div class="col-lg-4">
+      <div class="sticky-top" style="top: 20px;">
+        <!-- Действия -->
+        <div class="card mb-4">
+          <div class="card-header">
+            <h5 class="mb-0">Действия</h5>
+          </div>
+          <div class="card-body">
+            <% if user_signed_in? %>
+              <%= link_to "Оставить отзыв", new_movie_review_path(@movie), class: "btn btn-primary w-100 mb-2" %>
+            <% else %>
+              <%= link_to "Войдите, чтобы оставить отзыв", new_user_session_path, class: "btn btn-outline-primary w-100 mb-2" %>
+            <% end %>
+            <%= link_to "Все фильмы", movies_path, class: "btn btn-outline-secondary w-100 mb-2" %>
+            <% if user_signed_in? && @movie.user == current_user %>
+              <%= link_to "Редактировать фильм", edit_movie_path(@movie), class: "btn btn-outline-warning w-100" %>
+            <% end %>
+          </div>
+        </div>
+
+        <!-- Похожие фильмы -->
+        <% if @movie.genre.present? %>
+          <% similar_movies = Movie.where(genre: @movie.genre).where.not(id: @movie.id).limit(3) %>
+          <% if similar_movies.any? %>
+            <div class="card">
+              <div class="card-header">
+                <h5 class="mb-0">Похожие фильмы</h5>
+              </div>
+              <div class="card-body">
+                <% similar_movies.each do |movie| %>
+                  <div class="d-flex mb-3">
+                    <% if movie.url.present? %>
+                      <img src="<%= movie.url %>" class="rounded me-3" style="width: 60px; height: 90px; object-fit: cover;" alt="<%= movie.title %>">
+                    <% else %>
+                      <div class="rounded bg-light d-flex align-items-center justify-content-center me-3" style="width: 60px; height: 90px;">
+                        <i class="bi bi-film text-secondary"></i>
+                      </div>
+                    <% end %>
+                    <div>
+                      <h6 class="mb-1"><%= link_to movie.title, movie_path(movie), class: "text-decoration-none" %></h6>
+                      <p class="text-muted small mb-1"><%= movie.director %></p>
+                      <div class="d-flex align-items-center">
+                        <div class="rating small">
+                          <% (1..5).each do |star| %>
+                            <% if star <= movie.average_rating.round %>
+                              <i class="bi bi-star-fill text-warning" style="font-size: 0.8rem;"></i>
+                            <% else %>
+                              <i class="bi bi-star text-secondary" style="font-size: 0.8rem;"></i>
+                            <% end %>
+                          <% end %>
+                        </div>
+                        <small class="text-muted ms-1"><%= movie.average_rating %></small>
+                      </div>
+                    </div>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

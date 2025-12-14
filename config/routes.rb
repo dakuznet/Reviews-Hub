@@ -1,30 +1,20 @@
 Rails.application.routes.draw do
-  # Главная страница
   root "pages#home"
 
-  # Статические страницы
-  get "books", to: "pages#books"
-  get "movies", to: "pages#movies"
-
-  # Маршруты для аутентификации пользователей
   devise_for :users
 
-  # Временные маршруты для просмотра книг и фильмов
-  # (будут заменены полноценными контроллерами на следующем этапе)
-  get '/books/:id', to: 'pages#book_show', as: 'book'
-  get '/movies/:id', to: 'pages#movie_show', as: 'movie'
-
-  # Вложенные маршруты для отзывов:
-  # /books/1/reviews/new - новый отзыв на книгу
-  # /movies/1/reviews/1/edit - редактирование отзыва на фильм
-  resources :books, only: [:show] do
-    resources :reviews, only: [:new, :create, :edit, :update, :destroy]
+  resources :movies do
+    resources :reviews, only: [:create, :destroy, :edit, :update]
+    
+    collection do
+      get :search
+    end
   end
 
-  resources :movies, only: [:show] do
-    resources :reviews, only: [:new, :create, :edit, :update, :destroy]
-  end
-
-  # Отдельные маршруты для просмотра всех отзывов
   resources :reviews, only: [:index, :show]
+
+  get 'profile', to: 'users#show', as: :user_profile
+  get 'profile/reviews', to: 'users#reviews', as: :user_reviews
+  get 'profile/books', to: 'users#books', as: :user_books
+  get 'profile/movies', to: 'users#movies', as: :user_movies
 end
