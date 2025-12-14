@@ -1,0 +1,46 @@
+<nav class="navbar-top">
+  <div class="navbar-top-content">
+    <%= link_to root_path, class: "navbar-brand" do %>
+      <i class="bi bi-chat-square-text-fill me-2"></i> Reviews Hub
+    <% end %>
+    <% if user_signed_in? %>
+      <%= link_to "Создать отзыв", "#", class: "btn btn-primary me-3" %>
+    <% else %>
+      <%= link_to "Создать отзыв", new_user_session_path, class: "btn btn-outline-primary me-3" %>
+    <% end %>
+    <form class="search-form d-flex">
+      <input class="form-control me-2" type="search" placeholder="Поиск..." aria-label="Поиск">
+      <button class="btn btn-outline-secondary" type="submit">Найти</button>
+    </form>
+    <% if user_signed_in? %>
+      <div class="user-controls">
+        <div class="dropdown">
+          <button class="dropdown-toggle user-email-btn" type="button" tabindex="0">
+            <span class="email-text"><%= current_user.email %></span>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li><%= link_to "Профиль", edit_user_registration_path, class: "dropdown-item" %></li>
+          </ul>
+        </div>
+        <%= button_to "Выйти", destroy_user_session_path, method: :delete, class: "btn btn-outline-primary" %>
+      </div>
+    <% else %>
+      <%= link_to "Войти", new_user_session_path, class: "btn btn-outline-primary" %>
+    <% end %>
+  </div>
+</nav>
+<nav class="navbar-bottom">
+  <div class="navbar-bottom-content">
+    <ul class="navbar-links">
+      <li>
+        <%= link_to "Главная", root_path, class: current_page?(root_path) ? "active" : "" %>
+      </li>
+      <li>
+        <%= link_to "Книги", books_path, class: current_page?(books_path) ? "active" : "" %>
+      </li>
+      <li>
+        <%= link_to "Фильмы", movies_path, class: current_page?(movies_path) ? "active" : "" %>
+      </li>
+    </ul>
+  </div>
+</nav>
