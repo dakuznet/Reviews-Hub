@@ -2,19 +2,29 @@ Rails.application.routes.draw do
   # Главная страница
   root "pages#home"
 
+  # Статические страницы
   get "books", to: "pages#books"
   get "movies", to: "pages#movies"
 
-  # Маршруты Devise (должны быть после root)
+  # Маршруты для аутентификации пользователей
   devise_for :users
 
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
+  # Временные маршруты для просмотра книг и фильмов
+  # (будут заменены полноценными контроллерами на следующем этапе)
+  get '/books/:id', to: 'pages#book_show', as: 'book'
+  get '/movies/:id', to: 'pages#movie_show', as: 'movie'
 
-  # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
-  # Can be used by load balancers and uptime monitors to verify that the app is live.
-  get "up" => "rails/health#show", as: :rails_health_check
+  # Вложенные маршруты для отзывов:
+  # /books/1/reviews/new - новый отзыв на книгу
+  # /movies/1/reviews/1/edit - редактирование отзыва на фильм
+  resources :books, only: [:show] do
+    resources :reviews, only: [:new, :create, :edit, :update, :destroy]
+  end
 
-  # Render dynamic PWA files from app/views/pwa/* (remember to link manifest in application.html.erb)
-  # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
-  # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
+  resources :movies, only: [:show] do
+    resources :reviews, only: [:new, :create, :edit, :update, :destroy]
+  end
+
+  # Отдельные маршруты для просмотра всех отзывов
+  resources :reviews, only: [:index, :show]
 end
