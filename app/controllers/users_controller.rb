@@ -11,7 +11,12 @@ class UsersController < ApplicationController
   def reviews
     @user = current_user
     @reviews = @user.reviews.includes(:reviewable).order(created_at: :desc).page(params[:page])
-  end       
+  end
+  
+  def books
+    @user = current_user
+    @books = @user.books.order(created_at: :desc).page(params[:page])
+  end
   
   def movies
     @user = current_user

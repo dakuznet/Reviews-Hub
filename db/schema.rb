@@ -10,9 +10,24 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_14_164308) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_14_173820) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "books", force: :cascade do |t|
+    t.string "author"
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.string "edition"
+    t.string "genre"
+    t.string "publisher"
+    t.string "title"
+    t.datetime "updated_at", null: false
+    t.string "url"
+    t.bigint "user_id", null: false
+    t.integer "year"
+    t.index ["user_id"], name: "index_books_on_user_id"
+  end
 
   create_table "movies", force: :cascade do |t|
     t.string "country"
@@ -58,6 +73,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_14_164308) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "books", "users"
   add_foreign_key "movies", "users"
   add_foreign_key "reviews", "users"
 end
