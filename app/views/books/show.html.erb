@@ -3,92 +3,90 @@
     <div class="col-lg-8">
       <div class="card mb-4">
         <div class="row g-0">
-          <div class="<%= @book.url.present? ? 'col-md-8' : 'col-12' %>">
-            <div class="card-body">
-              <div class="d-flex justify-content-between align-items-start mb-3">
-                <div>
-                  <h1 class="card-title h2 mb-2"><%= @book.title %></h1>
-                  <h2 class="card-subtitle h4 text-muted"><%= @book.author %></h2>
-                </div>
-                <% if user_signed_in? && @book.user == current_user %>
-                  <div class="btn-group">
-                    <%= link_to "Редактировать", edit_book_path(@book), class: "btn btn-outline-primary" %>
-                    <%= button_to "Удалить", book_path(@book), 
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-start mb-3">
+              <div>
+                <h1 class="card-title h2 mb-2"><%= @book.title %></h1>
+                <h2 class="card-subtitle h4 text-muted"><%= @book.author %></h2>
+              </div>
+              <% if user_signed_in? && @book.user == current_user %>
+                <div class="btn-group">
+                  <%= link_to "Редактировать", edit_book_path(@book), class: "btn btn-outline-primary" %>
+                  <%= button_to "Удалить", book_path(@book), 
                           method: :delete, 
                           data: { confirm: "Вы уверены, что хотите удалить эту книгу?" }, 
                           class: "btn btn-outline-danger" %>
+                </div>
+              <% end %>
+            </div>
+            <div class="rating-section mb-4">
+              <div class="d-flex align-items-center">
+                <div class="average-rating me-4">
+                  <span class="display-4"><strong><%= @book.average_rating %></strong></span>
+                  <span class="text-muted">/5</span>
+                </div>
+                <div class="stars me-4">
+                  <% (1..5).each do |star| %>
+                    <% if star <= @book.average_rating.round %>
+                      <i class="bi bi-star-fill text-warning fs-3"></i>
+                    <% elsif star - 0.5 <= @book.average_rating %>
+                      <i class="bi bi-star-half text-warning fs-3"></i>
+                    <% else %>
+                      <i class="bi bi-star text-secondary fs-3"></i>
+                    <% end %>
+                  <% end %>
+                </div>
+                <div class="reviews-count">
+                  <span class="badge bg-secondary fs-6"><%= @book.reviews_count %> отзывов</span>
+                </div>
+              </div>
+            </div>
+            <div class="book-details mb-4">
+              <h5 class="mb-3">Информация о книге</h5>
+              <div class="row">
+                <% if @book.publisher.present? %>
+                  <div class="col-md-6 mb-2">
+                    <strong><i class="bi bi-building me-2"></i>Издательство:</strong>
+                    <span><%= @book.publisher %></span>
+                  </div>
+                <% end %>
+                <% if @book.year.present? %>
+                  <div class="col-md-6 mb-2">
+                    <strong><i class="bi bi-calendar me-2"></i>Год издания:</strong>
+                    <span><%= @book.year %></span>
+                  </div>
+                <% end %>
+                <% if @book.edition.present? %>
+                  <div class="col-md-6 mb-2">
+                    <strong><i class="bi bi-123 me-2"></i>Издание:</strong>
+                    <span><%= @book.edition %></span>
+                  </div>
+                <% end %>
+                <% if @book.genre.present? %>
+                  <div class="col-md-6 mb-2">
+                    <strong><i class="bi bi-tag me-2"></i>Жанр:</strong>
+                    <span><%= @book.genre %></span>
                   </div>
                 <% end %>
               </div>
-              <div class="rating-section mb-4">
-                <div class="d-flex align-items-center">
-                  <div class="average-rating me-4">
-                    <span class="display-4"><strong><%= @book.average_rating %></strong></span>
-                    <span class="text-muted">/5</span>
-                  </div>
-                  <div class="stars me-4">
-                    <% (1..5).each do |star| %>
-                      <% if star <= @book.average_rating.round %>
-                        <i class="bi bi-star-fill text-warning fs-3"></i>
-                      <% elsif star - 0.5 <= @book.average_rating %>
-                        <i class="bi bi-star-half text-warning fs-3"></i>
-                      <% else %>
-                        <i class="bi bi-star text-secondary fs-3"></i>
-                      <% end %>
-                    <% end %>
-                  </div>
-                  <div class="reviews-count">
-                    <span class="badge bg-secondary fs-6"><%= @book.reviews_count %> отзывов</span>
-                  </div>
-                </div>
+            </div>
+            <% if @book.description.present? %>
+              <div class="description mb-4">
+                <h5 class="mb-3">Описание</h5>
+                <p class="card-text"><%= simple_format(@book.description) %></p>
               </div>
-              <div class="book-details mb-4">
-                <h5 class="mb-3">Информация о книге</h5>
-                <div class="row">
-                  <% if @book.publisher.present? %>
-                    <div class="col-md-6 mb-2">
-                      <strong><i class="bi bi-building me-2"></i>Издательство:</strong>
-                      <span><%= @book.publisher %></span>
-                    </div>
-                  <% end %>
-                  <% if @book.year.present? %>
-                    <div class="col-md-6 mb-2">
-                      <strong><i class="bi bi-calendar me-2"></i>Год издания:</strong>
-                      <span><%= @book.year %></span>
-                    </div>
-                  <% end %>
-                  <% if @book.edition.present? %>
-                    <div class="col-md-6 mb-2">
-                      <strong><i class="bi bi-123 me-2"></i>Издание:</strong>
-                      <span><%= @book.edition %></span>
-                    </div>
-                  <% end %>
-                  <% if @book.genre.present? %>
-                    <div class="col-md-6 mb-2">
-                      <strong><i class="bi bi-tag me-2"></i>Жанр:</strong>
-                      <span><%= @book.genre %></span>
-                    </div>
-                  <% end %>
+            <% end %>
+            <div class="card-footer bg-transparent border-top">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <small class="text-muted">
+                    Добавлено пользователем: <strong><%= @book.user.email %></strong>
+                  </small>
                 </div>
-              </div>
-              <% if @book.description.present? %>
-                <div class="description mb-4">
-                  <h5 class="mb-3">Описание</h5>
-                  <p class="card-text"><%= simple_format(@book.description) %></p>
-                </div>
-              <% end %>
-              <div class="card-footer bg-transparent border-top">
-                <div class="d-flex justify-content-between align-items-center">
-                  <div>
-                    <small class="text-muted">
-                      Добавлено пользователем: <strong><%= @book.user.email %></strong>
-                    </small>
-                  </div>
-                  <div>
-                    <small class="text-muted">
-                      <%= l(@book.created_at, format: :long) %>
-                    </small>
-                  </div>
+                <div>
+                  <small class="text-muted">
+                    <%= l(@book.created_at, format: :long) %>
+                  </small>
                 </div>
               </div>
             </div>
@@ -106,12 +104,11 @@
               <%= form_with(model: [@book, @review], local: true) do |f| %>
                 <div class="mb-3">
                   <%= f.label :rating, "Ваша оценка", class: "form-label" %>
-                  <div class="rating-input">
+                  <div class="rating-input" data-rating-input>
                     <% (1..5).each do |star| %>
                       <label class="star-label">
-                        <%= f.radio_button :rating, star, class: "d-none" %>
-                        <i class="bi bi-star<%= star <= (@review.rating || 0) ? '-fill' : '' %> star-icon" 
-                           data-value="<%= star %>"></i>
+                        <%= f.radio_button :rating, star, class: "rating-radio" %>
+                        <span class="star" data-value="<%= star %>">☆</span>
                       </label>
                     <% end %>
                   </div>
@@ -185,48 +182,69 @@
 <style>
   .rating-input {
     display: flex;
-    gap: 10px;
+    gap: 8px;
   }
 
-  .star-label {
+  .star {
+    font-size: 32px;
     cursor: pointer;
+    color: #ccc;
+    transition: color 0.15s, transform 0.1s;
+    user-select: none;
   }
 
+  .star.active {
+    color: #ffc107;
+  }
+
+  .star:hover {
+    transform: scale(1.1);
+  }
   .star-icon {
     font-size: 32px;
-    color: #dee2e6;
-    transition: color 0.2s;
+    cursor: pointer;
+    color: #ccc;
+    transition: color 0.15s, transform 0.1s;
+    user-select: none;
   }
 
-  .star-icon:hover {
-    color: #ffc107;
-  }
-
-  .bi-star-fill {
-    color: #ffc107;
+  .rating-radio {
+    display: none;
   }
 </style>
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const stars = document.querySelectorAll('.star-icon');
-    const ratingInput = document.querySelectorAll('input[name="review[rating]"]');
+  document.addEventListener('DOMContentLoaded', function () {
+    const rating = document.querySelector('[data-rating-input]');
+    if (!rating) return;
+
+    const stars = rating.querySelectorAll('.star');
+    const radios = rating.querySelectorAll('.rating-radio');
+
+    function paint(value) {
+      stars.forEach(star => {
+        const starValue = Number(star.dataset.value);
+        star.classList.toggle('active', starValue <= value);
+        star.textContent = starValue <= value ? '★' : '☆';
+      });
+    }
+
+    function current() {
+      const checked = Array.from(radios).find(r => r.checked);
+      return checked ? Number(checked.value) : 0;
+    }
 
     stars.forEach(star => {
-      star.addEventListener('click', function() {
-        const value = parseInt(this.dataset.value);
+      const value = Number(star.dataset.value);
 
-        stars.forEach((s, index) => {
-          if (index < value) {
-            s.classList.remove('bi-star');
-            s.classList.add('bi-star-fill');
-          } else {
-            s.classList.remove('bi-star-fill');
-            s.classList.add('bi-star');
-          }
-        });
+      star.addEventListener('mouseenter', () => paint(value));
+      star.addEventListener('mouseleave', () => paint(current()));
 
-        ratingInput[value - 1].checked = true;
+      star.addEventListener('click', () => {
+        radios[value - 1].checked = true;
+        paint(value);
       });
     });
+
+    paint(current());
   });
 </script>

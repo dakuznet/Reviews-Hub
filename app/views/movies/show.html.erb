@@ -3,111 +3,109 @@
     <div class="col-lg-8">
       <div class="card mb-4">
         <div class="row g-0">
-          <div class="<%= @movie.url.present? ? 'col-md-8' : 'col-12' %>">
-            <div class="card-body">
-              <div class="d-flex justify-content-between align-items-start mb-3">
-                <div>
-                  <h1 class="card-title h2 mb-2"><%= @movie.title %></h1>
-                  <h2 class="card-subtitle h4 text-muted">Режиссер: <%= @movie.director %></h2>
-                </div>
-                <% if user_signed_in? && @movie.user == current_user %>
-                  <div class="btn-group">
-                    <%= link_to "Редактировать", edit_movie_path(@movie), class: "btn btn-outline-primary" %>
-                    <%= button_to "Удалить", movie_path(@movie), 
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-start mb-3">
+              <div>
+                <h1 class="card-title h2 mb-2"><%= @movie.title %></h1>
+                <h2 class="card-subtitle h4 text-muted">Режиссер: <%= @movie.director %></h2>
+              </div>
+              <% if user_signed_in? && @movie.user == current_user %>
+                <div class="btn-group">
+                  <%= link_to "Редактировать", edit_movie_path(@movie), class: "btn btn-outline-primary" %>
+                  <%= button_to "Удалить", movie_path(@movie), 
                           method: :delete, 
                           data: { confirm: "Вы уверены, что хотите удалить этот фильм?" }, 
                           class: "btn btn-outline-danger" %>
+                </div>
+              <% end %>
+            </div>
+            <!-- Рейтинг -->
+            <div class="rating-section mb-4">
+              <div class="d-flex align-items-center">
+                <div class="average-rating me-4">
+                  <span class="display-4"><strong><%= @movie.average_rating %></strong></span>
+                  <span class="text-muted">/5</span>
+                </div>
+                <div class="stars me-4">
+                  <% (1..5).each do |star| %>
+                    <% if star <= @movie.average_rating.round %>
+                      <i class="bi bi-star-fill text-warning fs-3"></i>
+                    <% elsif star - 0.5 <= @movie.average_rating %>
+                      <i class="bi bi-star-half text-warning fs-3"></i>
+                    <% else %>
+                      <i class="bi bi-star text-secondary fs-3"></i>
+                    <% end %>
+                  <% end %>
+                </div>
+                <div class="reviews-count">
+                  <span class="badge bg-secondary fs-6"><%= @movie.reviews_count %> отзывов</span>
+                </div>
+              </div>
+            </div>
+            <div class="movie-details mb-4">
+              <h5 class="mb-3">Информация о фильме</h5>
+              <div class="row">
+                <% if @movie.year.present? %>
+                  <div class="col-md-6 mb-2">
+                    <strong><i class="bi bi-calendar me-2"></i>Год выпуска:</strong>
+                    <span><%= @movie.year %></span>
+                  </div>
+                <% end %>
+                <% if @movie.duration.present? %>
+                  <div class="col-md-6 mb-2">
+                    <strong><i class="bi bi-clock me-2"></i>Длительность:</strong>
+                    <span><%= @movie.formatted_duration %></span>
+                  </div>
+                <% end %>
+                <% if @movie.genre.present? %>
+                  <div class="col-md-6 mb-2">
+                    <strong><i class="bi bi-tag me-2"></i>Жанр:</strong>
+                    <span><%= @movie.genre %></span>
+                  </div>
+                <% end %>
+                <% if @movie.country.present? %>
+                  <div class="col-md-6 mb-2">
+                    <strong><i class="bi bi-globe me-2"></i>Страна:</strong>
+                    <span><%= @movie.country %></span>
+                  </div>
+                <% end %>
+                <% if @movie.screenwriter.present? %>
+                  <div class="col-md-6 mb-2">
+                    <strong><i class="bi bi-pencil me-2"></i>Сценарист:</strong>
+                    <span><%= @movie.screenwriter %></span>
+                  </div>
+                <% end %>
+                <% if @movie.producer.present? %>
+                  <div class="col-md-6 mb-2">
+                    <strong><i class="bi bi-person-video me-2"></i>Продюсер:</strong>
+                    <span><%= @movie.producer %></span>
+                  </div>
+                <% end %>
+                <% if @movie.studio.present? %>
+                  <div class="col-md-12 mb-2">
+                    <strong><i class="bi bi-building me-2"></i>Студия:</strong>
+                    <span><%= @movie.studio %></span>
                   </div>
                 <% end %>
               </div>
-              <!-- Рейтинг -->
-              <div class="rating-section mb-4">
-                <div class="d-flex align-items-center">
-                  <div class="average-rating me-4">
-                    <span class="display-4"><strong><%= @movie.average_rating %></strong></span>
-                    <span class="text-muted">/5</span>
-                  </div>
-                  <div class="stars me-4">
-                    <% (1..5).each do |star| %>
-                      <% if star <= @movie.average_rating.round %>
-                        <i class="bi bi-star-fill text-warning fs-3"></i>
-                      <% elsif star - 0.5 <= @movie.average_rating %>
-                        <i class="bi bi-star-half text-warning fs-3"></i>
-                      <% else %>
-                        <i class="bi bi-star text-secondary fs-3"></i>
-                      <% end %>
-                    <% end %>
-                  </div>
-                  <div class="reviews-count">
-                    <span class="badge bg-secondary fs-6"><%= @movie.reviews_count %> отзывов</span>
-                  </div>
-                </div>
+            </div>
+            <% if @movie.description.present? %>
+              <div class="description mb-4">
+                <h5 class="mb-3">Описание</h5>
+                <p class="card-text"><%= simple_format(@movie.description) %></p>
               </div>
-              <div class="movie-details mb-4">
-                <h5 class="mb-3">Информация о фильме</h5>
-                <div class="row">
-                  <% if @movie.year.present? %>
-                    <div class="col-md-6 mb-2">
-                      <strong><i class="bi bi-calendar me-2"></i>Год выпуска:</strong>
-                      <span><%= @movie.year %></span>
-                    </div>
-                  <% end %>
-                  <% if @movie.duration.present? %>
-                    <div class="col-md-6 mb-2">
-                      <strong><i class="bi bi-clock me-2"></i>Длительность:</strong>
-                      <span><%= @movie.formatted_duration %></span>
-                    </div>
-                  <% end %>
-                  <% if @movie.genre.present? %>
-                    <div class="col-md-6 mb-2">
-                      <strong><i class="bi bi-tag me-2"></i>Жанр:</strong>
-                      <span><%= @movie.genre %></span>
-                    </div>
-                  <% end %>
-                  <% if @movie.country.present? %>
-                    <div class="col-md-6 mb-2">
-                      <strong><i class="bi bi-globe me-2"></i>Страна:</strong>
-                      <span><%= @movie.country %></span>
-                    </div>
-                  <% end %>
-                  <% if @movie.screenwriter.present? %>
-                    <div class="col-md-6 mb-2">
-                      <strong><i class="bi bi-pencil me-2"></i>Сценарист:</strong>
-                      <span><%= @movie.screenwriter %></span>
-                    </div>
-                  <% end %>
-                  <% if @movie.producer.present? %>
-                    <div class="col-md-6 mb-2">
-                      <strong><i class="bi bi-person-video me-2"></i>Продюсер:</strong>
-                      <span><%= @movie.producer %></span>
-                    </div>
-                  <% end %>
-                  <% if @movie.studio.present? %>
-                    <div class="col-md-12 mb-2">
-                      <strong><i class="bi bi-building me-2"></i>Студия:</strong>
-                      <span><%= @movie.studio %></span>
-                    </div>
-                  <% end %>
+            <% end %>
+            <div class="card-footer bg-transparent border-top">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <small class="text-muted">
+                    Добавлено пользователем: <strong><%= @movie.user.email %></strong>
+                  </small>
                 </div>
-              </div>
-              <% if @movie.description.present? %>
-                <div class="description mb-4">
-                  <h5 class="mb-3">Описание</h5>
-                  <p class="card-text"><%= simple_format(@movie.description) %></p>
-                </div>
-              <% end %>
-              <div class="card-footer bg-transparent border-top">
-                <div class="d-flex justify-content-between align-items-center">
-                  <div>
-                    <small class="text-muted">
-                      Добавлено пользователем: <strong><%= @movie.user.email %></strong>
-                    </small>
-                  </div>
-                  <div>
-                    <small class="text-muted">
-                      <%= l(@movie.created_at, format: :long) %>
-                    </small>
-                  </div>
+                <div>
+                  <small class="text-muted">
+                    <%= l(@movie.created_at, format: :long) %>
+                  </small>
                 </div>
               </div>
             </div>
@@ -122,14 +120,14 @@
               <h5 class="mb-0">Оставить отзыв</h5>
             </div>
             <div class="card-body">
-              <%= form_with(model: [@movie, Review.new], local: true) do |f| %>
+              <%= form_with(model: [@movie, @review], local: true) do |f| %>
                 <div class="mb-3">
                   <%= f.label :rating, "Ваша оценка", class: "form-label" %>
-                  <div class="rating-input">
+                  <div class="rating-input" data-rating-input>
                     <% (1..5).each do |star| %>
                       <label class="star-label">
-                        <%= f.radio_button :rating, star, class: "d-none", required: true %>
-                        <i class="bi bi-star star-icon" data-value="<%= star %>"></i>
+                        <%= f.radio_button :rating, star, class: "rating-radio" %>
+                        <span class="star" data-value="<%= star %>">☆</span>
                       </label>
                     <% end %>
                   </div>
@@ -198,3 +196,72 @@
     </div>
   </div>
 </div>
+<style>
+  .rating-input {
+    display: flex;
+    gap: 8px;
+  }
+
+  .star {
+    font-size: 32px;
+    cursor: pointer;
+    color: #ccc;
+    transition: color 0.15s, transform 0.1s;
+    user-select: none;
+  }
+
+  .star.active {
+    color: #ffc107;
+  }
+
+  .star:hover {
+    transform: scale(1.1);
+  }
+  .star-icon {
+    font-size: 32px;
+    cursor: pointer;
+    color: #ccc;
+    transition: color 0.15s, transform 0.1s;
+    user-select: none;
+  }
+
+  .rating-radio {
+    display: none;
+  }
+</style>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const rating = document.querySelector('[data-rating-input]');
+    if (!rating) return;
+
+    const stars = rating.querySelectorAll('.star');
+    const radios = rating.querySelectorAll('.rating-radio');
+
+    function paint(value) {
+      stars.forEach(star => {
+        const starValue = Number(star.dataset.value);
+        star.classList.toggle('active', starValue <= value);
+        star.textContent = starValue <= value ? '★' : '☆';
+      });
+    }
+
+    function current() {
+      const checked = Array.from(radios).find(r => r.checked);
+      return checked ? Number(checked.value) : 0;
+    }
+
+    stars.forEach(star => {
+      const value = Number(star.dataset.value);
+
+      star.addEventListener('mouseenter', () => paint(value));
+      star.addEventListener('mouseleave', () => paint(current()));
+
+      star.addEventListener('click', () => {
+        radios[value - 1].checked = true;
+        paint(value);
+      });
+    });
+
+    paint(current());
+  });
+</script>
